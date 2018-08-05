@@ -98,5 +98,30 @@ if (command == `${prefix}anunciar`) {
     incidentchannel.send(banEmbed);
 }
 
+              if (command == `${prefix}report`) {
+          let rUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+          if(!rUser) return message.channel.send(`:x: **Mencione o usuário!**`);
+          if(rUser.id === message.author.id) return message.channel.send(`**Você não pode se reportar!** :x:`)
+          let rreason = args.join(" ").slice(22);
+          if(!rreason) return message.channel.send(`**Coloque a razão do Report!** :x:`)
+          message.delete();
+      
+          let reportEmbed = new Discord.RichEmbed()
+        .setTitle(`Flash Report`)
+        .addField(' Usuário Reportado', rUser)
+        .addField(' Reportado por', message.author)
+        .addField(' Razão', rreason)
+          .setColor("#f2ff00")
+          .setThumbnail(message.author.avatarURL)
+          .setFooter(` Report`, message.author.displayAvatarURL)
+      
+          let reportschannel = message.guild.channels.find(`name`, "reports");
+
+          message.channel.send(`**Usuário reportado com sucesso.**`)
+      
+          message.delete().catch(O_o=>{});
+          reportschannel.send(reportEmbed);
+        }  
+        
     });
 bot.login(TOKEN);
