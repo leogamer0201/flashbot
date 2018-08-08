@@ -6,7 +6,7 @@ const TOKEN = process.env.BOT_TOKEN
 
 bot.on("message", function(message) {
 
-    bot.user.setActivity(`!ajuda | 4 Comandos`, {type: "WATCHING"});
+    bot.user.setActivity(`!ajuda | 5 Comandos`, {type: "WATCHING"});
            
 });
 
@@ -96,6 +96,45 @@ if (command == `${prefix}anunciar`) {
     message.channel.send(`**Usuário banido com sucesso!**`)
 
     incidentchannel.send(banEmbed);
+}
+
+ if (cmd == `${prefix}kick`) {
+    if(!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send(`**Você não tem permissão para utilizar esse comando.**`);
+    let kUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+    if(!kUser) return message.channel.send(`**Mencione o usuário!** :x:`);
+   if(kUser.hasPermission("ADMINISTRATOR")) return message.channel.send("**Você não pode expulsar alguém que tem Administrador.** :x:");
+    if(kUser.id === message.author.id) return message.channel.send(`**Você não pode se Expulsar!** :x:`)
+   
+    let kReason = args.join(" ").slice(22);
+    if(!kReason) return message.channel.send(`**Coloque a razão do kick.** :x:`)
+    message.delete();
+
+    const embed = new Discord.RichEmbed()
+    .setFooter(`Equipe de Moderação`)
+    .setTitle(`Você foi Expulso do ${message.guild.name}!`)
+    .addField("Staff:", `${message.author.username}`)
+    .addField("Razão:", kReason)
+
+    try{
+      await kUser.send(embed)
+    }catch(e){
+    }
+
+    let kickEmbed = new Discord.RichEmbed()
+    .setTitle(`Flash Kick`)
+   .addField(' Usuário Expulso:', kUser)
+   .addField(' Staff:', message.author)
+   .addField(' Razão:', kReason)
+    .setFooter(`Equipe de Moderação`)
+    .setThumbnail(message.author.avatarURL)
+
+    message.guild.member(kUser).kick(`Expulso pelo ${message.author.username} - Motivo: ${kReason}`);
+
+    let kickchannel = message.guild.channels.find(`name`, "punicoes");
+
+    message.channel.send(`**Usuário expulso com sucesso.**`)
+
+    kickchannel.send(kickEmbed);  
 }
 
     });
