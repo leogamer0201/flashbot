@@ -96,7 +96,44 @@ if (command == `${prefix}anunciar`) {
     message.channel.send(`**Usuário banido com sucesso!**`)
 
     incidentchannel.send(banEmbed);
-}
+} 
 
+  if (cmd == `${prefix}kick`) {
+    if(!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send(`<@${message.author.id}>, Você não tem permissão para usar esse Comando`);
+    let kUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+    if(!kUser) return message.channel.send(`<@${message.author.id}>, Mencione um Usuário para Expulsar!`);
+    let kReason = args.join(" ").slice(22);
+    if(!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send("Você não tem permissão para usar esse Comando");
+    if(kUser.hasPermission("ADMINISTRATOR")) return message.channel.send(`<@${message.author.id}>, Não consigo kickar esse Usuário!`);
+
+    let kickEmbed = new Discord.RichEmbed()
+    .addField("Kick", `Isso que deu quando o ${kUser.user.username} não respeitou as Regras!`)
+    .setColor("#e56b00")
+    .addField(" Usuário Expulso:", `${kUser}`)
+    .addField(" Autor:", `<@${message.author.id}>`)
+    .addField(" Motivo:", kReason);
+
+    let kickChannel = message.guild.channels.find(`name`, "punicoes");
+    if(!kickChannel) return message.channel.send("Canal Punicoes Inexistente");
+
+    message.channel.send(`<@${message.author.id}>, Usuário Kickado!`)
+
+    const embed = new Discord.RichEmbed()
+    .setTitle(`Você foi Expulso no Servidor ${message.guild.name}!`)
+    .addField(" Pelo Staff", `${message.author.username}`)
+    .addField(" Motivo", kReason)
+    .setColor("#e56b00")
+
+    try{
+      await kUser.send(embed);
+    }catch(e){
+    }
+
+    message.delete().catch(O_o=>{});
+    message.guild.member(kUser).kick(`Expulso pelo ${message.author.username} - Motivo: ${kReason}`);
+    kickChannel.send(kickEmbed);
+  
+}        
+        
     });
 bot.login(TOKEN);
